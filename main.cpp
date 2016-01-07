@@ -14,7 +14,10 @@
 
 void func(void)
 {
-    printf("hello\n");
+    while(true)
+    {
+        printf("hello\n");
+    }
 }
 
 int main(int argc,char **argv)
@@ -22,6 +25,11 @@ int main(int argc,char **argv)
   mythread::Mythread t;
   t.start();
   t.newThread(func);
-  sleep(1000);
+  printf("hehe\n");
+//  sleep(1000);
+  while(1)
+  {
+    printf("world\n");
+  }
   return 0;
 }
