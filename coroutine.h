@@ -26,17 +26,21 @@ namespace mythread
             template <typename threadCallback,typename ...Args>
             void newThread(threadCallback cb,Args ...args)  //创建新线程
             {
-                printf("222\n");
                 std::unique_ptr<ucontext_t> threadContext(new ucontext_t);
+                
+                assert(getcontext(threadContext.get()) != -1);  //获取当前上下文
+            
+                //设置当前上下文信息    
                 threadContext->uc_stack.ss_sp = new char[stackSize_];
                 threadContext->uc_stack.ss_size = stackSize_;
                 threadContext->uc_link = 0;
                 threadContext->uc_flags = 0;
                 assert(threadContext->uc_stack.ss_sp != NULL);
-                makecontext(threadContext.get(),cb,sizeof...(args),args...);  //可能C++11多参与传统C不同
-                printf("222\n");
+
+                //将参数cb切换为当前上下文的入口函数
+                makecontext(threadContext.get(),cb,sizeof...(args),args...);
+                //将当前上下文插入map之中
                 threadMap_.insert(std::pair<int,std::unique_ptr<ucontext_t>>(makeThreadId(),std::move(threadContext)));
-                printf("333\n"); 
             }
 
             void destroyThread(int id);  //销毁某个线程
